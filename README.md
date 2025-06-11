@@ -105,4 +105,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact
 
-For any queries, please contact: info@grameenconnect.org 
+For any queries, please contact: divyanshu3388@gmail.com
