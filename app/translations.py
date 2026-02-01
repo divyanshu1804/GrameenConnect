@@ -67,9 +67,9 @@ translations = {
         # Footer
         'about_platform': 'A platform designed to bridge the digital divide in rural areas.',
         'contact': 'Contact',
-        'copyright': '© 2023 GrameenConnect',
+        'copyright': '© 2025 GrameenConnect Made By Team X',
         'quick_links': 'Quick Links',
-        'address': 'Rural Community Center, Sample Village',
+        'address': 'Rural Community Center, Patna, Bihar',
         
         # Jobs Page
         'job_details': 'Job Details',
@@ -562,4 +562,5 @@ translations = {
         'opportunities': 'अवसर',
         'available_jobs': 'उपलब्ध नौकरियां',
     }
+
 } 
