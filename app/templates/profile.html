@@ -1,0 +1,532 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ t.profile }} - GrameenConnect{% endblock %}
+
+{% block content %}
+<div class="fade-in profile-page">
+    <!-- Profile Header with LinkedIn-style layout -->
+    <div class="profile-header position-relative rounded-4 overflow-hidden shadow-sm">
+        <!-- Banner Background -->
+        <div class="banner-background" style="
+            {% if user.banner_image %}
+                background-image: url('{{ url_for('static', filename='images/uploads/' + user.banner_image) }}');
+            {% else %}
+                background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            {% endif %}
+        "></div>
+        
+        <!-- Profile Picture (LinkedIn-style overlapping the banner) -->
+        <div class="avatar-container">
+            {% if user.profile_image %}
+                <div class="rounded-circle overflow-hidden">
+                    <img src="{{ url_for('static', filename='images/uploads/' + user.profile_image) }}" 
+                         alt="{{ user.fullname or user.username }}" 
+                         class="w-100 h-100" style="object-fit: cover;">
+                </div>
+            {% else %}
+                <div class="rounded-circle d-flex align-items-center justify-content-center overflow-hidden text-white" 
+                     style="background-color: #4CAF50; font-size: 3rem;">
+                    {% if user.fullname %}
+                        {{ user.fullname[0].upper() }}
+                    {% else %}
+                        {{ user.username[0].upper() }}
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="container">
+            <div class="row">
+                <!-- User Details -->
+                <div class="col-lg-8">
+                    <div class="user-details shadow-sm p-3 rounded-3">
+                        <h2 class="mb-1">{{ user.fullname }}</h2>
+                        <p class="text-muted mb-1">@{{ user.username }}</p>
+                        <p class="mb-0 d-flex align-items-center">
+                            <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                            <span>{{ user.village or t.village_not_specified }}</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Edit Profile Button -->
+                <div class="col-lg-4 text-end d-flex justify-content-end align-items-center">
+                    <a href="{{ url_for('edit_profile') }}" class="btn btn-outline-primary rounded-pill me-2">
+                        <i class="fas fa-user-edit me-1"></i>{{ t.edit_profile }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Info Cards -->
+    <div class="row profile-stats g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 rounded-4 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="icon-wrapper bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" 
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-briefcase fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="display-5 fw-bold mb-0">{{ jobs|length }}</h3>
+                    <p class="text-muted">{{ t.jobs_posted }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 rounded-4 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="icon-wrapper bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" 
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                    </div>
+                    <h3 class="display-5 fw-bold mb-0">{{ issues|length }}</h3>
+                    <p class="text-muted">{{ t.issues_reported }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 rounded-4 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="icon-wrapper bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" 
+                         style="width: 80px; height: 80px;">
+                        <i class="fas fa-shopping-cart fa-2x text-success"></i>
+                    </div>
+                    <h3 class="display-5 fw-bold mb-0">{{ products|length }}</h3>
+                    <p class="text-muted">{{ t.products_listed }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Details -->
+    <div class="row mb-4">
+        <div class="col-lg-5 mb-4 mb-lg-0">
+            <div class="card border-0 rounded-4 shadow-sm h-100">
+                <div class="card-header bg-transparent border-0 pt-4 pb-0">
+                    <h4><i class="fas fa-user text-primary me-2"></i>{{ t.personal_info }}</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item border-0 ps-0 py-3">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <span class="info-icon rounded-circle d-inline-flex align-items-center justify-content-center bg-light">
+                                        <i class="fas fa-user text-primary"></i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 text-muted">{{ t.fullname }}</h6>
+                                    <p class="mb-0 fs-5">{{ user.fullname or t.not_provided }}</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item border-0 ps-0 py-3">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <span class="info-icon rounded-circle d-inline-flex align-items-center justify-content-center bg-light">
+                                        <i class="fas fa-user-tag text-primary"></i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 text-muted">{{ t.username }}</h6>
+                                    <p class="mb-0 fs-5">{{ user.username }}</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item border-0 ps-0 py-3">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <span class="info-icon rounded-circle d-inline-flex align-items-center justify-content-center bg-light">
+                                        <i class="fas fa-map-marker-alt text-primary"></i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 text-muted">{{ t.village }}</h6>
+                                    <p class="mb-0 fs-5">{{ user.village or t.not_provided }}</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item border-0 ps-0 py-3">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <span class="info-icon rounded-circle d-inline-flex align-items-center justify-content-center bg-light">
+                                        <i class="fas fa-phone text-primary"></i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 text-muted">{{ t.contact }}</h6>
+                                    <p class="mb-0 fs-5">{{ user.contact }}</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item border-0 ps-0 py-3">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <span class="info-icon rounded-circle d-inline-flex align-items-center justify-content-center bg-light">
+                                        <i class="fas fa-calendar-alt text-primary"></i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 text-muted">{{ t.joined }}</h6>
+                                    <p class="mb-0 fs-5">
+                                        {% if user.joined_date %}
+                                            {{ user.joined_date.split(' ')[0] if ' ' in user.joined_date else user.joined_date }}
+                                        {% else %}
+                                            {{ t.not_available }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-7">
+            <!-- Activity Tabs -->
+            <div class="card border-0 rounded-4 shadow-sm h-100">
+                <div class="card-header bg-transparent border-0 pt-4 pb-0">
+                    <ul class="nav nav-pills" id="profileTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="jobs-tab" data-bs-target="#jobs-tab-pane" 
+                                    type="button" role="tab" aria-controls="jobs-tab-pane" aria-selected="true">
+                                <i class="fas fa-briefcase me-2"></i>{{ t.jobs }}
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="issues-tab" data-bs-target="#issues-tab-pane" 
+                                    type="button" role="tab" aria-controls="issues-tab-pane" aria-selected="false">
+                                <i class="fas fa-exclamation-triangle me-2"></i>{{ t.issues }}
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="products-tab" data-bs-target="#products-tab-pane" 
+                                    type="button" role="tab" aria-controls="products-tab-pane" aria-selected="false">
+                                <i class="fas fa-shopping-cart me-2"></i>{{ t.products }}
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="applications-tab" data-bs-target="#applications-tab-pane" 
+                                    type="button" role="tab" aria-controls="applications-tab-pane" aria-selected="false">
+                                <i class="fas fa-file-alt me-2"></i>{{ t.applications }}
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="profileTabsContent">
+                        <!-- Jobs Tab -->
+                        <div class="tab-pane fade show active" id="jobs-tab-pane" role="tabpanel" aria-labelledby="jobs-tab" tabindex="0">
+                            {% if jobs %}
+                                <div class="list-group">
+                                    {% for job in jobs %}
+                                        <a href="{{ url_for('job_details', id=job.id) }}" class="list-group-item list-group-item-action border-0 mb-3 rounded-3 shadow-sm">
+                                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                                <h5 class="mb-1">{{ job.title }}</h5>
+                                                <span class="badge rounded-pill bg-primary">{{ job.category }}</span>
+                                            </div>
+                                            <p class="mb-1 text-truncate">{{ job.description }}</p>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ job.location }}</small>
+                                                <small class="text-muted">
+                                                    {% if job.posted_date %}
+                                                        <i class="fas fa-calendar-alt me-1"></i>{{ job.posted_date.split(' ')[0] if ' ' in job.posted_date else job.posted_date }}
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-briefcase fa-3x text-muted mb-3 opacity-50"></i>
+                                    <p>{{ t.no_jobs_posted }}</p>
+                                    <a href="{{ url_for('new_job') }}" class="btn btn-primary rounded-pill">
+                                        <i class="fas fa-plus me-1"></i>{{ t.post_new_job }}
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Issues Tab -->
+                        <div class="tab-pane fade" id="issues-tab-pane" role="tabpanel" aria-labelledby="issues-tab" tabindex="0">
+                            {% if issues %}
+                                <div class="list-group">
+                                    {% for issue in issues %}
+                                        <div class="list-group-item border-0 mb-3 rounded-3 shadow-sm">
+                                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                                <h5 class="mb-1">{{ issue.title }}</h5>
+                                                <span class="badge rounded-pill {{ 'bg-success' if issue.status == 'Resolved' else 'bg-warning' if issue.status == 'In Progress' else 'bg-danger' }}">
+                                                    {{ issue.status }}
+                                                </span>
+                                            </div>
+                                            <p class="mb-1 text-truncate">{{ issue.description }}</p>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ issue.location }}</small>
+                                                <small class="text-muted">
+                                                    {% if issue.reported_date %}
+                                                        <i class="fas fa-calendar-alt me-1"></i>{{ issue.reported_date.split(' ')[0] if ' ' in issue.reported_date else issue.reported_date }}
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-exclamation-triangle fa-3x text-muted mb-3 opacity-50"></i>
+                                    <p>{{ t.no_issues_reported }}</p>
+                                    <a href="{{ url_for('report_issue') }}" class="btn btn-primary rounded-pill">
+                                        <i class="fas fa-plus me-1"></i>{{ t.report_new_issue }}
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Products Tab -->
+                        <div class="tab-pane fade" id="products-tab-pane" role="tabpanel" aria-labelledby="products-tab" tabindex="0">
+                            {% if products %}
+                                <div class="row row-cols-1 row-cols-md-2 g-3">
+                                    {% for product in products %}
+                                        <div class="col">
+                                            <div class="card h-100 border-0 rounded-3 shadow-sm product-card">
+                                                {% if product.image %}
+                                                    <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" 
+                                                         class="card-img-top rounded-top" alt="{{ product.name }}" 
+                                                         style="height: 140px; object-fit: cover;">
+                                                {% else %}
+                                                    <div class="card-img-top bg-light rounded-top d-flex align-items-center justify-content-center" 
+                                                         style="height: 140px;">
+                                                        <i class="fas fa-shopping-basket fa-3x text-muted opacity-50"></i>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ product.name }}</h5>
+                                                    <h6 class="card-subtitle mb-2 text-success">{{ product.price }}</h6>
+                                                    <p class="card-text small text-truncate mb-0">{{ product.description }}</p>
+                                                </div>
+                                                <div class="card-footer bg-transparent border-0">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-calendar-alt me-1"></i>
+                                                        {% if product.posted_date %}
+                                                            {{ product.posted_date.split(' ')[0] if ' ' in product.posted_date else product.posted_date }}
+                                                        {% endif %}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3 opacity-50"></i>
+                                    <p>{{ t.no_products_listed }}</p>
+                                    <a href="{{ url_for('new_product') }}" class="btn btn-primary rounded-pill">
+                                        <i class="fas fa-plus me-1"></i>{{ t.list_new_product }}
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Applications Tab -->
+                        <div class="tab-pane fade" id="applications-tab-pane" role="tabpanel" aria-labelledby="applications-tab" tabindex="0">
+                            {% if applications %}
+                                <div class="list-group">
+                                    {% for application in applications %}
+                                        <div class="list-group-item border-0 mb-3 rounded-3 shadow-sm">
+                                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                                <h5 class="mb-1">{{ application.job_title }}</h5>
+                                                <span class="badge rounded-pill {{ 'bg-success' if application.status == 'Accepted' else 'bg-warning' if application.status == 'Under Review' else 'bg-danger' if application.status == 'Rejected' else 'bg-secondary' }}">
+                                                    {{ application.status }}
+                                                </span>
+                                            </div>
+                                            <p class="mb-1 text-truncate">{{ application.message or application.experience or 'No details provided' }}</p>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-user me-1"></i>{{ application.name or session.get('username', 'Applicant') }}
+                                                </small>
+                                                <small class="text-muted">
+                                                    {% if application.application_date %}
+                                                        <i class="fas fa-calendar-alt me-1"></i>{{ application.application_date.split(' ')[0] if ' ' in application.application_date else application.application_date }}
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-file-alt fa-3x text-muted mb-3 opacity-50"></i>
+                                    <p>{{ t.no_job_applications }}</p>
+                                    <a href="{{ url_for('jobs') }}" class="btn btn-primary rounded-pill">
+                                        <i class="fas fa-search me-1"></i>{{ t.browse_jobs }}
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Force reload CSS to prevent caching issues
+    (function() {
+        // Create a unique timestamp to force cache refresh
+        const timestamp = new Date().getTime();
+        
+        // Create a new link element with the timestamp
+        const cssLink = document.createElement('link');
+        cssLink.rel = 'stylesheet';
+        cssLink.href = '{{ url_for('static', filename='css/pages/profile.css') }}?v=' + timestamp;
+        
+        // Remove any existing profile CSS
+        const links = document.getElementsByTagName('link');
+        for (let i = 0; i < links.length; i++) {
+            if (links[i].href.includes('profile.css')) {
+                links[i].parentNode.removeChild(links[i]);
+                i--;
+            }
+        }
+        
+        // Add the new CSS link to the head
+        document.head.appendChild(cssLink);
+        
+        // Custom tab handling without data-bs-toggle to avoid conflicts
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('#profileTabs .nav-link');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all buttons and hide all panes
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabPanes.forEach(pane => {
+                        pane.classList.remove('show');
+                        pane.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Show the corresponding tab pane
+                    const target = this.getAttribute('data-bs-target');
+                    const pane = document.querySelector(target);
+                    if (pane) {
+                        pane.classList.add('show');
+                        pane.classList.add('active');
+                    }
+                });
+            });
+            
+            // Hover effects for cards
+            const hoverCards = document.querySelectorAll('.hover-card');
+            hoverCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.transition = 'transform 0.3s ease';
+                    this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '';
+                });
+            });
+        });
+    })();
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<!-- Include the profile-specific CSS with cache-busting parameter -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/profile.css') }}?v={{ range(1000, 9999) | random }}">
+
+<style>
+    /* Critical LinkedIn-style profile CSS (inline to ensure it works) */
+    .profile-header {
+        position: relative !important;
+        overflow: visible !important;
+        margin-bottom: 100px !important;
+        border-radius: 8px !important;
+    }
+    
+    .banner-background {
+        width: 100% !important;
+        height: 200px !important;
+        position: relative !important;
+        z-index: 1 !important;
+        background-size: cover !important;
+        background-position: center center !important;
+    }
+    
+    .avatar-container {
+        position: absolute !important;
+        left: 32px !important;
+        bottom: -80px !important;
+        z-index: 30 !important;
+    }
+    
+    .avatar-container .rounded-circle {
+        width: 160px !important;
+        height: 160px !important;
+        border: 6px solid white !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+        overflow: hidden !important;
+    }
+    
+    .user-details {
+        position: relative !important;
+        z-index: 5 !important;
+        margin-top: 90px !important;
+        margin-left: 200px !important;
+    }
+    
+    .col-lg-4.text-end {
+        position: relative !important;
+        z-index: 10 !important;
+        margin-top: 90px !important;
+    }
+    
+    @media (max-width: 991px) {
+        .avatar-container {
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+        }
+        
+        .user-details {
+            margin-left: 0 !important;
+            text-align: center !important;
+        }
+    }
+    
+    @media (max-width: 767px) {
+        .banner-background {
+            height: 150px !important;
+        }
+        
+        .avatar-container .rounded-circle {
+            width: 120px !important;
+            height: 120px !important;
+        }
+        
+        .avatar-container {
+            bottom: -60px !important;
+        }
+        
+        .user-details {
+            margin-top: 70px !important;
+        }
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,532 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ t.govt_schemes }} - GrameenConnect{% endblock %}
+
+{% block content %}
+<div class="schemes-section fade-in">
+    <div class="section-header d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <div class="badge-minimal mb-2">
+                <span class="badge-line"></span>
+                <span class="badge-text text-uppercase">{{ t.government_programs }}</span>
+            </div>
+            <h1 class="h2 fw-bold mb-0">{{ t.govt_schemes }}</h1>
+        </div>
+    </div>
+    
+    <div class="category-filter-wrapper mb-5">
+        <div class="category-filter-container">
+            <h5 class="filter-heading mb-3">{{ t.explore_schemes_by_category }}</h5>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ url_for('schemes') }}" class="category-pill {% if not request.args.get('category') %}active{% endif %}">{{ t.all }}</a>
+                <a href="{{ url_for('schemes', category='Agriculture') }}" class="category-pill {% if request.args.get('category') == 'Agriculture' %}active{% endif %}">{{ t.agriculture }}</a>
+                <a href="{{ url_for('schemes', category='Education') }}" class="category-pill {% if request.args.get('category') == 'Education' %}active{% endif %}">{{ t.education }}</a>
+                <a href="{{ url_for('schemes', category='Housing') }}" class="category-pill {% if request.args.get('category') == 'Housing' %}active{% endif %}">{{ t.housing }}</a>
+                <a href="{{ url_for('schemes', category='Health') }}" class="category-pill {% if request.args.get('category') == 'Health' %}active{% endif %}">{{ t.health }}</a>
+                <a href="{{ url_for('schemes', category='Women & Child') }}" class="category-pill {% if request.args.get('category') == 'Women & Child' %}active{% endif %}">{{ t.women_and_child }}</a>
+                <a href="{{ url_for('schemes', category='Other') }}" class="category-pill {% if request.args.get('category') == 'Other' %}active{% endif %}">{{ t.other }}</a>
+            </div>
+        </div>
+    </div>
+    
+    {% if schemes %}
+        <div class="row g-4">
+            {% for scheme in schemes %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="scheme-card bg-white h-100 transition-all">
+                        <div class="scheme-card-top p-4 pb-0">
+                            <div class="scheme-category mb-3">
+                                <div class="scheme-tag">{{ scheme.category }}</div>
+                            </div>
+                            <h5 class="fw-bold mb-3">{{ scheme.title }}</h5>
+                            <p class="scheme-description text-muted mb-4">{{ scheme.description }}</p>
+                        </div>
+                        <div class="scheme-card-bottom p-4 pt-0">
+                            <div class="scheme-meta d-flex justify-content-between align-items-center mb-3">
+                                <div class="deadline d-flex align-items-center">
+                                    <i class="fas fa-calendar-alt text-primary me-2"></i>
+                                    <span class="deadline-text">{{ scheme.deadline }}</span>
+                                </div>
+                                <div class="scheme-department">
+                                    <span class="department-text">{{ scheme.department }}</span>
+                                </div>
+                            </div>
+                            <div class="scheme-eligibility mb-4">
+                                <h6 class="eligibility-heading mb-2">{{ t.eligibility }}</h6>
+                                <p class="eligibility-text text-muted small">{{ scheme.eligibility }}</p>
+                            </div>
+                            <div class="scheme-actions">
+                                <a href="{{ url_for('scheme_details', id=scheme.id) }}" class="btn btn-primary w-100 rounded-1">
+                                    {{ t.view_details }} <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state text-center py-5 bg-light rounded-1">
+            <i class="fas fa-file-alt fa-3x text-muted mb-3 opacity-50"></i>
+            <h3 class="h4 fw-normal text-muted">{{ t.no_schemes_found }}</h3>
+            <p class="text-muted mx-auto" style="max-width: 400px;">{{ t.no_schemes_message }}</p>
+            {% if request.args.get('category') %}
+                <a href="{{ url_for('schemes') }}" class="btn btn-primary mt-3 rounded-1">
+                    <i class="fas fa-undo me-2"></i>{{ t.view_all_schemes }}
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    body, html {
+        max-width: 100vw;
+        overflow-x: hidden !important;
+    }
+    
+    /* Enhanced color scheme and aesthetics */
+    :root {
+        --primary-rgb: 56, 142, 60; /* Green shade */
+        --primary-color: #388e3c;
+        --primary-color-dark: #2e7d32;
+        --primary-color-light: #c8e6c9;
+        --accent-color: #ff6e40;
+        --text-dark: #263238;
+        --text-muted: #607d8b;
+        --bg-light: #f5f8f5;
+        --card-bg: #ffffff;
+        --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.04);
+        --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Enhanced minimalist schemes section styling */
+    .schemes-section {
+        margin-bottom: 3rem;
+        position: relative;
+        color: var(--text-dark);
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+    
+    .section-header {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .badge-minimal {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+    
+    .badge-line {
+        display: inline-block;
+        width: 30px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary-color), transparent);
+        margin-right: 12px;
+    }
+    
+    .badge-text {
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+    
+    /* Category filter styling */
+    .category-filter-wrapper {
+        position: relative;
+        z-index: 1;
+        margin-bottom: 3rem;
+        width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+    
+    .category-filter-container {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Fix row issue */
+    .row.g-4 {
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .filter-heading {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--text-dark);
+    }
+    
+    .category-pill {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 30px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        background-color: var(--bg-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        margin-bottom: 5px;
+        white-space: nowrap;
+    }
+    
+    .category-pill:hover {
+        background-color: var(--primary-color-light);
+        color: var(--primary-color-dark);
+        transform: translateY(-2px);
+    }
+    
+    .category-pill.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    /* Scheme card styling */
+    .scheme-card {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border-left: 3px solid transparent;
+        background: var(--card-bg);
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .scheme-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 0;
+        background: linear-gradient(90deg, var(--primary-color), transparent);
+        opacity: 0.15;
+        transition: all 0.3s ease;
+    }
+    
+    .scheme-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-lg);
+        border-left-color: var(--primary-color);
+    }
+    
+    .scheme-card:hover::before {
+        height: 5px;
+    }
+    
+    .scheme-card-top {
+        flex-grow: 1;
+        position: relative;
+    }
+    
+    .scheme-tag {
+        display: inline-block;
+        padding: 0.35rem 0.8rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--primary-color);
+        background-color: var(--primary-color-light);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .scheme-card h5 {
+        font-size: 1.15rem;
+        letter-spacing: -0.3px;
+        transition: all 0.3s ease;
+        position: relative;
+        display: inline-block;
+        color: var(--text-dark);
+    }
+    
+    .scheme-card:hover h5 {
+        color: var(--primary-color);
+    }
+    
+    .scheme-description {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--text-muted);
+        display: -webkit-box;
+    }
+    
+    .scheme-card-bottom {
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .scheme-meta {
+        padding: 1rem 0;
+    }
+    
+    .deadline {
+        font-size: 0.85rem;
+        color: var(--accent-color);
+        font-weight: 500;
+    }
+    
+    .department-text {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        font-style: italic;
+    }
+    
+    .eligibility-heading {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        font-weight: 600;
+    }
+    
+    .eligibility-text {
+        font-size: 0.85rem;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .scheme-actions .btn {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        transition: all 0.3s ease;
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .scheme-actions .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.4);
+        background-color: var(--primary-color-dark);
+        border-color: var(--primary-color-dark);
+    }
+    
+    .scheme-actions .btn i {
+        transition: all 0.3s ease;
+    }
+    
+    .scheme-actions .btn:hover i {
+        transform: translateX(3px);
+    }
+    
+    /* Empty state styling */
+    .empty-state {
+        padding: 5rem 2rem;
+        background: linear-gradient(145deg, var(--bg-light), #f1f3f5);
+        border-radius: 8px;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .empty-state i {
+        font-size: 3.5rem;
+        color: #ddd;
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-state h3 {
+        font-weight: 300;
+        color: var(--text-dark);
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state p {
+        color: var(--text-muted);
+        font-size: 1rem;
+    }
+    
+    .empty-state .btn {
+        margin-top: 1.5rem;
+        padding: 0.7rem 1.5rem;
+        font-weight: 500;
+        box-shadow: 0 5px 15px rgba(var(--primary-rgb), 0.25);
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .row.g-4 > [class*="col-"] {
+        opacity: 0;
+        animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    .row.g-4 > [class*="col-"]:nth-child(1) { animation-delay: 0.1s; }
+    .row.g-4 > [class*="col-"]:nth-child(2) { animation-delay: 0.2s; }
+    .row.g-4 > [class*="col-"]:nth-child(3) { animation-delay: 0.3s; }
+    .row.g-4 > [class*="col-"]:nth-child(4) { animation-delay: 0.4s; }
+    .row.g-4 > [class*="col-"]:nth-child(5) { animation-delay: 0.5s; }
+    .row.g-4 > [class*="col-"]:nth-child(6) { animation-delay: 0.6s; }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .section-header {
+            margin-bottom: 3rem;
+        }
+        
+        .scheme-card {
+            margin-bottom: 2rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .category-filter-container {
+            padding: 1.25rem;
+        }
+    }
+
+    /* Responsive fixes */
+    .d-flex.flex-wrap.gap-2 {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem !important;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 1199px) {
+        .category-pill {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 991px) {
+        .category-filter-container {
+            padding: 1.25rem;
+        }
+        
+        .filter-heading {
+            font-size: 1rem;
+        }
+        
+        .category-pill {
+            padding: 0.35rem 0.7rem;
+            font-size: 0.8rem;
+        }
+        
+        .scheme-card {
+            margin-bottom: 1rem;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 1rem;
+        }
+        
+        .category-filter-container {
+            padding: 1rem;
+        }
+        
+        .category-pill {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+            margin-right: 0.25rem;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .badge-minimal {
+            font-size: 0.75rem;
+        }
+        
+        .badge-text {
+            font-size: 0.75rem;
+        }
+        
+        .badge-line {
+            width: 20px;
+        }
+        
+        h1.h2 {
+            font-size: 1.5rem;
+        }
+        
+        .filter-heading {
+            font-size: 0.9rem;
+        }
+        
+        .category-pill {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+        }
+        
+        .scheme-tag {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .scheme-card h5 {
+            font-size: 1rem;
+        }
+        
+        .scheme-description, .eligibility-text {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
+<script>
+    // Add hover effects for scheme cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const schemeCards = document.querySelectorAll('.scheme-card');
+        
+        schemeCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                card.style.transform = 'translateY(-8px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
+{% endblock %} 

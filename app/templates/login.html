@@ -1,0 +1,313 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ t.login }} - GrameenConnect{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-7 d-none d-md-flex align-items-center">
+                <div class="auth-info p-4">
+                    <h2 class="mb-4">{{ t.welcome_back }}</h2>
+                    <p class="lead mb-4">{{ t.login_tagline }}</p>
+                    <div class="auth-features">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-circle bg-success text-white me-3">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <span>{{ t.access_jobs }}</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-circle bg-success text-white me-3">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <span>{{ t.sell_products }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="icon-circle bg-success text-white me-3">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <span>{{ t.report_issues }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="auth-form shadow">
+                    <div class="text-center mb-4">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="GrameenConnect Logo" class="auth-logo mb-3">
+                        <h2 class="mb-1">{{ t.login }}</h2>
+                        <p class="text-muted">{{ t.access_your_account }}</p>
+                    </div>
+                    <form method="post" action="{{ url_for('login') }}" id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">{{ t.username }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="{{ t.enter_username }}" required>
+                            </div>
+                            <div class="invalid-feedback">Please enter your username.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">{{ t.password }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="{{ t.enter_password }}" required>
+                                <button type="button" class="btn btn-outline-secondary password-toggle" tabindex="-1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">Please enter your password.</div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>{{ t.login }}
+                            </button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-4">
+                        <p>{{ t.no_account }} <a href="{{ url_for('register') }}" class="text-success fw-bold">{{ t.register }}</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    body, html {
+        max-width: 100vw;
+        overflow-x: hidden !important;
+    }
+
+    .auth-form {
+        background-color: white;
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+    
+    .auth-logo {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+    }
+    
+    .auth-info {
+        height: 100%;
+    }
+    
+    .icon-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .shadow {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+    }
+    
+    .password-toggle {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-color: #dee2e6;
+    }
+    
+    .password-toggle:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .alert {
+        border-radius: var(--border-radius);
+        border: none;
+    }
+    
+    .form-control.is-invalid, 
+    .was-validated .form-control:invalid {
+        border-color: #dc3545;
+        background-image: none;
+    }
+    
+    /* Fix container padding */
+    .container.my-5 {
+        padding: 0 1rem !important;
+        overflow: hidden;
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .row {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        box-sizing: border-box;
+    }
+    
+    .col-md-5, .col-md-7 {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        box-sizing: border-box;
+    }
+    
+    .input-group {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .fade-in {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 1199px) {
+        .auth-form {
+            padding: 2rem;
+        }
+    }
+    
+    @media (max-width: 991px) {
+        .auth-form {
+            padding: 1.75rem;
+        }
+        
+        .auth-logo {
+            width: 70px;
+            height: 70px;
+        }
+    }
+    
+    @media (max-width: 767px) {
+        .fade-in {
+            padding: 0;
+        }
+        
+        .container.my-5 {
+            padding: 0 !important;
+            margin: 1rem 0 !important;
+        }
+        
+        .auth-form {
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 575px) {
+        .fade-in {
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .auth-form {
+            padding: 1.25rem;
+            margin: 0;
+            box-shadow: none;
+            border-radius: 0;
+            width: 100%;
+        }
+        
+        .container.my-5 {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding: 0 !important;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .auth-logo {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .row {
+            margin: 0;
+            width: 100%;
+        }
+        
+        .col-md-5 {
+            padding: 0;
+            width: 100%;
+        }
+        
+        .input-group {
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .btn-lg {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+        
+        /* Prevent horizontal scrolling */
+        html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Password visibility toggle
+        const togglePassword = document.querySelector('.password-toggle');
+        const passwordField = document.querySelector('#password');
+        
+        togglePassword.addEventListener('click', function() {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+        
+        // Form validation
+        const form = document.getElementById('loginForm');
+        
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            form.classList.add('was-validated');
+        });
+        
+        // Auto-focus on username field
+        document.getElementById('username').focus();
+        
+        // Animation for alerts
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.classList.add('show');
+            }, 100);
+            
+            // Auto-dismiss alerts after 5 seconds
+            const closeButton = alert.querySelector('.btn-close');
+            if (closeButton) {
+                setTimeout(() => {
+                    closeButton.click();
+                }, 5000);
+            }
+        });
+    });
+</script>
+{% endblock %} 

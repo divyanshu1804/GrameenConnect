@@ -1,0 +1,260 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ job.title }} - GrameenConnect Jobs{% endblock %}
+
+{% block content %}
+<div class="fade-in container py-4 job-details-container">
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('jobs') }}"><i class="fas fa-arrow-left me-1"></i>{{ t.back_to_jobs }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ job.title }}</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Job Details -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4 border-0 rounded-3">
+                <div class="card-header bg-light border-0 d-flex justify-content-between align-items-center py-3">
+                    <span class="badge rounded-pill bg-primary text-white">
+                        <i class="fas fa-briefcase me-1"></i>
+                        {% if job.category == 'Agriculture' %}
+                            {{ t.agriculture }}
+                        {% elif job.category == 'Tutoring' %}
+                            {{ t.tutoring }}
+                        {% elif job.category == 'Labor' %}
+                            {{ t.labor }}
+                        {% elif job.category == 'Skilled Trade' %}
+                            {{ t.skilled_trade }}
+                        {% else %}
+                            {{ t.other }}
+                        {% endif %}
+                    </span>
+                    {% if job.deadline %}
+                    <span class="badge rounded-pill bg-danger text-white">
+                        <i class="fas fa-calendar-day me-1"></i>{{ t.deadline }}: {{ job.deadline }}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="card-body p-4">
+                    <h1 class="card-title display-6 mb-4">{{ job.title }}</h1>
+                    
+                    <div class="job-meta mb-4 p-3 bg-light rounded-3">
+                        <div class="row g-3">
+                            {% if job.location %}
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                    <span>{{ job.location }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if job.salary %}
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-rupee-sign text-primary me-2"></i>
+                                    <span>{{ job.salary }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if job.contact %}
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-phone text-primary me-2"></i>
+                                    <span>{{ job.contact }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-calendar text-primary me-2"></i>
+                                    <span>{{ t.posted_on }} 
+                                    {% if job.posted_date %}
+                                        {{ job.posted_date }}
+                                    {% else %}
+                                        {{ t.recently }}
+                                    {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="job-description mb-4">
+                        <h4 class="mb-3 border-bottom pb-2"><i class="fas fa-file-alt me-2 text-primary"></i>{{ t.job_description }}</h4>
+                        <p class="card-text lead">{{ job.description }}</p>
+                    </div>
+
+                    {% if job.eligibility %}
+                    <div class="job-eligibility mb-4">
+                        <h4 class="mb-3 border-bottom pb-2"><i class="fas fa-check-circle me-2 text-primary"></i>{{ t.eligibility_criteria }}</h4>
+                        <div class="card bg-light border-0 shadow-sm">
+                            <div class="card-body">
+                                {% for criterion in job.eligibility.split('\n') %}
+                                    <div class="d-flex align-items-start mb-2">
+                                        <i class="fas fa-check text-success me-2 mt-1"></i>
+                                        <span>{{ criterion }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Contact Information -->
+            <div class="card shadow-sm mb-4 border-0 rounded-3">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0"><i class="fas fa-info-circle text-primary me-2"></i>{{ t.contact_information }}</h5>
+                </div>
+                <div class="card-body p-4">
+                    {% if job.contact %}
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">{{ t.contact_person }}</h6>
+                        <p class="mb-0 d-flex align-items-center">
+                            <i class="fas fa-user-circle text-primary me-2"></i>
+                            {{ job.contact }}
+                        </p>
+                    </div>
+                    {% endif %}
+                    {% if job.location %}
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">{{ t.location }}</h6>
+                        <p class="mb-0 d-flex align-items-center">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                            {{ job.location }}
+                        </p>
+                    </div>
+                    {% endif %}
+                    {% if job.salary %}
+                    <div>
+                        <h6 class="text-muted mb-2">{{ t.salary }}</h6>
+                        <p class="mb-0 d-flex align-items-center">
+                            <i class="fas fa-rupee-sign text-primary me-2"></i>
+                            {{ job.salary }}
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Application Deadline -->
+            {% if job.deadline %}
+            <div class="card shadow-sm mb-4 border-0 rounded-3">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0"><i class="fas fa-clock text-primary me-2"></i>{{ t.application_deadline }}</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="deadline-icon rounded-circle bg-light p-3 text-center me-3">
+                            <i class="fas fa-calendar-check text-danger fa-2x"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">{{ job.deadline }}</h6>
+                            <small class="text-muted">{{ t.apply_before_deadline }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Action Buttons - Desktop -->
+            <div class="d-none d-md-grid gap-2">
+                {% if session.get('user_id') %}
+                <a href="{{ url_for('apply_for_job', id=job.id) }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-paper-plane me-2"></i>{{ t.apply_for_job }}
+                </a>
+                {% endif %}
+                <a href="tel:{{ job.contact }}" class="btn btn-success btn-lg">
+                    <i class="fas fa-phone-alt me-2"></i>{{ t.call_now }}
+                </a>
+                <a href="sms:{{ job.contact }}?body=I'm interested in the job: {{ job.title }}" class="btn btn-outline-primary">
+                    <i class="fas fa-sms me-2"></i>{{ t.send_message }}
+                </a>
+                <a href="#" onclick="window.print()" class="btn btn-outline-secondary">
+                    <i class="fas fa-print me-2"></i>{{ t.print_details }}
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Jobs - Optional, can be added if job recommendations are available -->
+    <div class="mt-5">
+        <h3 class="mb-4 border-bottom pb-2"><i class="fas fa-briefcase text-primary me-2"></i>{{ t.similar_jobs }}</h3>
+        <div class="text-center py-4">
+            <i class="fas fa-info-circle text-muted fa-2x mb-3"></i>
+            <p>{{ t.check_jobs_page }} <a href="{{ url_for('jobs') }}" class="fw-bold">{{ t.jobs_page }}</a>.</p>
+        </div>
+    </div>
+    
+    <!-- Mobile Action Button - Fixed Floating Button -->
+    <div class="d-md-none">
+        <a href="#" class="mobile-fab btn btn-primary" id="mobile-action-toggle">
+            <i class="fas fa-ellipsis-v"></i>
+        </a>
+    </div>
+    
+    <!-- Mobile Bottom Action Bar -->
+    <div class="d-md-none action-buttons-mobile" id="mobile-action-bar">
+        <div class="d-grid gap-2">
+            <div class="row g-2">
+                {% if session.get('user_id') %}
+                <div class="col-12 mb-2">
+                    <a href="{{ url_for('apply_for_job', id=job.id) }}" class="btn btn-primary w-100">
+                        <i class="fas fa-paper-plane me-2"></i>{{ t.apply_for_job }}
+                    </a>
+                </div>
+                {% endif %}
+                <div class="col-6">
+                    <a href="tel:{{ job.contact }}" class="btn btn-success w-100">
+                        <i class="fas fa-phone-alt me-2"></i>{{ t.call_now }}
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a href="sms:{{ job.contact }}?body=I'm interested in the job: {{ job.title }}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-sms me-2"></i>{{ t.send_message }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile action button toggle
+        const mobileActionToggle = document.getElementById('mobile-action-toggle');
+        const mobileActionBar = document.getElementById('mobile-action-bar');
+        
+        if (mobileActionToggle && mobileActionBar) {
+            // Initialize - hide the action bar
+            mobileActionBar.style.transform = 'translateY(100%)';
+            mobileActionBar.style.transition = 'transform 0.3s ease';
+            
+            let isActionBarVisible = false;
+            
+            mobileActionToggle.addEventListener('click', function(event) {
+                event.preventDefault();
+                
+                if (isActionBarVisible) {
+                    mobileActionBar.style.transform = 'translateY(100%)';
+                    mobileActionToggle.innerHTML = '<i class="fas fa-ellipsis-v"></i>';
+                } else {
+                    mobileActionBar.style.transform = 'translateY(0)';
+                    mobileActionToggle.innerHTML = '<i class="fas fa-times"></i>';
+                }
+                
+                isActionBarVisible = !isActionBarVisible;
+            });
+        }
+    });
+</script>
+{% endblock %} 

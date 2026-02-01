@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ t.apply_for_job }}: {{ job.title }} - GrameenConnect{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('jobs') }}"><i class="fas fa-briefcase me-1"></i>{{ t.jobs }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('job_details', id=job.id) }}">{{ job.title }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ t.apply_for_job }}</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-light border-0 pt-4 pb-3">
+                    <h3 class="mb-0">
+                        <i class="fas fa-paper-plane text-primary me-2"></i>{{ t.apply_for_job }}
+                    </h3>
+                    <p class="text-muted mb-0">{{ job.title }}</p>
+                </div>
+                <div class="card-body p-4">
+                    {% if already_applied %}
+                        <div class="alert alert-info rounded-3" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>{{ t.already_applied }}
+                        </div>
+                    {% endif %}
+                    
+                    <form method="POST" action="{{ url_for('apply_for_job', id=job.id) }}">
+                        <!-- Job Summary -->
+                        <div class="job-summary mb-4 p-3 bg-light rounded-3">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge rounded-pill bg-primary me-2">
+                                    {% if job.category == 'Agriculture' %}
+                                        {{ t.agriculture }}
+                                    {% elif job.category == 'Tutoring' %}
+                                        {{ t.tutoring }}
+                                    {% elif job.category == 'Labor' %}
+                                        {{ t.labor }}
+                                    {% elif job.category == 'Skilled Trade' %}
+                                        {{ t.skilled_trade }}
+                                    {% else %}
+                                        {{ t.other }}
+                                    {% endif %}
+                                </span>
+                                <span class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ job.location }}</span>
+                            </div>
+                            <p class="mb-0">{{ job.description[:150] }}{% if job.description|length > 150 %}...{% endif %}</p>
+                        </div>
+                        
+                        <div class="row g-3 mb-4">
+                            <!-- Name -->
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">{{ t.full_name }} <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0"><i class="fas fa-user text-primary"></i></span>
+                                    <input type="text" class="form-control border-0 bg-light" id="name" name="name" value="{{ user.fullname if user else '' }}" required>
+                                </div>
+                            </div>
+                            
+                            <!-- Phone -->
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">{{ t.contact_number }} <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0"><i class="fas fa-phone text-primary"></i></span>
+                                    <input type="tel" class="form-control border-0 bg-light" id="phone" name="phone" value="{{ user.contact if user else '' }}" required>
+                                </div>
+                            </div>
+                            
+                            <!-- Experience -->
+                            <div class="col-12">
+                                <label for="experience" class="form-label">{{ t.relevant_experience }}</label>
+                                <textarea class="form-control border-0 bg-light" id="experience" name="experience" rows="3" placeholder="{{ t.experience_placeholder }}"></textarea>
+                            </div>
+                            
+                            <!-- Message -->
+                            <div class="col-12">
+                                <label for="message" class="form-label">{{ t.message_to_employer }}</label>
+                                <textarea class="form-control border-0 bg-light" id="message" name="message" rows="5" placeholder="{{ t.message_placeholder }}"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('job_details', id=job.id) }}" class="btn btn-outline-secondary rounded-pill">
+                                <i class="fas fa-times me-1"></i>{{ t.cancel }}
+                            </a>
+                            <button type="submit" class="btn btn-primary rounded-pill">
+                                <i class="fas fa-paper-plane me-1"></i>{{ t.submit_application }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

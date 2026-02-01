@@ -1,0 +1,268 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ t.marketplace }} - GrameenConnect{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Marketplace Header -->
+    <div class="bg-light py-4 mb-4 rounded">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-2">{{ t.local_marketplace }}</h1>
+                    <p class="lead text-muted mb-0">{{ t.marketplace_tagline }}</p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    {% if session.get('user_id') %}
+                        <a href="{{ url_for('new_product') }}" class="btn btn-success">
+                            <i class="fas fa-plus-circle me-2"></i>{{ t.list_new_product }}
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-success">
+                            <i class="fas fa-sign-in-alt me-2"></i>{{ t.login_to_sell }}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Search and Filter Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <h5 class="card-title mb-3">{{ t.browse_by_category }}</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="{{ url_for('marketplace') }}" class="btn btn-sm {% if not request.args.get('category') %}btn-success{% else %}btn-outline-success{% endif %}">
+                                <i class="fas fa-th me-1"></i>{{ t.all }}
+                            </a>
+                            <a href="{{ url_for('marketplace', category='Agriculture') }}" class="btn btn-sm {% if request.args.get('category') == 'Agriculture' %}btn-success{% else %}btn-outline-success{% endif %}">
+                                <i class="fas fa-seedling me-1"></i>{{ t.agriculture }}
+                            </a>
+                            <a href="{{ url_for('marketplace', category='Handicrafts') }}" class="btn btn-sm {% if request.args.get('category') == 'Handicrafts' %}btn-success{% else %}btn-outline-success{% endif %}">
+                                <i class="fas fa-paint-brush me-1"></i>{{ t.handicrafts }}
+                            </a>
+                            <a href="{{ url_for('marketplace', category='Food') }}" class="btn btn-sm {% if request.args.get('category') == 'Food' %}btn-success{% else %}btn-outline-success{% endif %}">
+                                <i class="fas fa-utensils me-1"></i>{{ t.food }}
+                            </a>
+                            <a href="{{ url_for('marketplace', category='Clothing') }}" class="btn btn-sm {% if request.args.get('category') == 'Clothing' %}btn-success{% else %}btn-outline-success{% endif %}">
+                                <i class="fas fa-tshirt me-1"></i>{{ t.clothing }}
+                            </a>
+                            <a href="{{ url_for('marketplace', category='Other') }}" class="btn btn-sm {% if request.args.get('category') == 'Other' %}btn-success{% else %}btn-outline-success{% endif %}">
+                                <i class="fas fa-box me-1"></i>{{ t.other }}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="card-title mb-3">{{ t.search_products }}</h5>
+                        <form method="GET" action="{{ url_for('marketplace') }}">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="search" placeholder="{{ t.search_placeholder }}" value="{{ request.args.get('search', '') }}">
+                                <button class="btn btn-success" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Listings -->
+        {% if products %}
+            <div class="row g-4">
+                {% for product in products %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card product-card h-100">
+                            <div class="position-absolute top-0 end-0 p-2">
+                                <span class="badge bg-success">{{ product.category }}</span>
+                            </div>
+                            {% if product.image %}
+                                <div class="product-img-container">
+                                    <img src="{{ url_for('static', filename='images/uploads/' + product.image) }}" alt="{{ product.name }}" class="card-img-top">
+                                </div>
+                            {% else %}
+                                <div class="product-img-container bg-light d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-image text-muted" style="font-size: 4rem;"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="card-body">
+                                <h5 class="card-title mb-2">{{ product.name }}</h5>
+                                <p class="card-text mb-3">
+                                    {% if product.description|length > 100 %}
+                                        {{ product.description[:100] }}...
+                                    {% else %}
+                                        {{ product.description }}
+                                    {% endif %}
+                                </p>
+                                <h4 class="price mb-3 text-success">₹ {{ product.price }}</h4>
+                                <div class="product-details">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                        <span>{{ product.location }}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-phone text-muted me-2"></i>
+                                        <span>{{ product.contact }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    {% if product.posted_date is string %}
+                                        {{ product.posted_date.split(' ')[0] if ' ' in product.posted_date else product.posted_date }}
+                                    {% else %}
+                                        {{ product.posted_date.strftime('%d %b %Y') }}
+                                    {% endif %}
+                                </small>
+                                <a href="tel:{{ product.contact }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-phone me-1"></i>{{ t.contact_seller }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <div class="empty-state-icon mb-3">
+                    <i class="fas fa-store fa-4x text-muted"></i>
+                </div>
+                <h3 class="text-muted">{{ t.no_products_found }}</h3>
+                <p class="text-muted mb-4">{{ t.no_products_message }}</p>
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('new_product') }}" class="btn btn-success">
+                        <i class="fas fa-plus-circle me-2"></i>{{ t.be_first_to_list }}
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-success">
+                        <i class="fas fa-sign-in-alt me-2"></i>{{ t.login_to_sell }}
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    body, html {
+        max-width: 100vw;
+        overflow-x: hidden !important;
+    }
+    
+    .fade-in {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .empty-state-icon {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        border-radius: 50%;
+        background-color: rgba(76, 175, 80, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .price {
+        font-weight: 600;
+    }
+    
+    .product-card .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    /* Responsive fixes */
+    .bg-light.py-4.mb-4.rounded {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+
+    .card-body {
+        overflow-x: hidden;
+    }
+    
+    .row.g-4 {
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
+    }
+
+    .d-flex.flex-wrap.gap-2 {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .btn-sm {
+        margin-bottom: 5px;
+        white-space: nowrap;
+    }
+
+    .product-card {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .product-img-container {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    @media (max-width: 1199px) {
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width: 991px) {
+        .d-flex.flex-wrap.gap-2 {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .col-md-8, .col-md-4 {
+            padding: 0 10px;
+        }
+        
+        .btn-sm {
+            margin-right: 3px;
+            margin-bottom: 5px;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .bg-light.py-4.mb-4.rounded {
+            padding: 1rem !important;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        h5.card-title {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}
+{% endblock %} 

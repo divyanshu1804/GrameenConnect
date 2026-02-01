@@ -1,0 +1,288 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ t.my_applications }} - GrameenConnect{% endblock %}
+
+{% block extra_css %}
+<!-- Include specific stylesheet for My Applications page -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/my_applications.css') }}">
+<style>
+    /* Fix for dropdown menus on my_applications page */
+    .dropdown-menu {
+        z-index: 9999 !important; 
+        position: absolute !important;
+        display: none;
+    }
+    
+    .dropdown-menu.show {
+        display: block !important;
+    }
+    
+    /* Specific fixes for language dropdown */
+    .language-dropdown {
+        min-width: 180px !important;
+        width: 180px !important;
+        max-width: 180px !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+    
+    /* Ensure dropdown content is visible */
+    .dropdown-item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Fix dropdown position in mobile view */
+    @media (max-width: 767px) {
+        .navbar-nav.ms-auto .dropdown-menu.show {
+            position: absolute !important;
+            top: 100% !important;
+            right: 0 !important;
+            left: auto !important;
+            width: auto !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0"><i class="fas fa-clipboard-list text-primary me-2"></i>{{ t.my_applications }}</h1>
+        <a href="{{ url_for('jobs') }}" class="btn btn-outline-primary rounded-pill">
+            <i class="fas fa-search me-1"></i>{{ t.browse_jobs }}
+        </a>
+    </div>
+    
+    {% if applications %}
+        <div class="row">
+            {% for application in applications %}
+                <div class="col-lg-6 mb-4">
+                    <div class="card border-0 rounded-4 shadow-sm h-100">
+                        <div class="card-header bg-light border-0 d-flex justify-content-between align-items-center py-3">
+                            <span class="badge rounded-pill bg-primary text-white">
+                                <i class="fas fa-briefcase me-1"></i>
+                                {% if application.job_category == 'Agriculture' %}
+                                    {{ t.agriculture }}
+                                {% elif application.job_category == 'Tutoring' %}
+                                    {{ t.tutoring }}
+                                {% elif application.job_category == 'Labor' %}
+                                    {{ t.labor }}
+                                {% elif application.job_category == 'Skilled Trade' %}
+                                    {{ t.skilled_trade }}
+                                {% else %}
+                                    {{ t.other }}
+                                {% endif %}
+                            </span>
+                            <span class="badge rounded-pill 
+                                {% if application.status == 'Accepted' %}
+                                    bg-success
+                                {% elif application.status == 'Rejected' %}
+                                    bg-danger
+                                {% elif application.status == 'Under Review' %}
+                                    bg-warning
+                                {% else %}
+                                    bg-secondary
+                                {% endif %}">
+                                <i class="fas fa-info-circle me-1"></i>{{ application.status }}
+                            </span>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="card-title fw-bold mb-3">{{ application.job_title }}</h5>
+                            
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-light rounded-circle p-2 me-2">
+                                    <i class="fas fa-map-marker-alt text-primary"></i>
+                                </div>
+                                <span class="text-muted">{{ application.job_location }}</span>
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-light rounded-circle p-2 me-2">
+                                    <i class="fas fa-calendar-day text-primary"></i>
+                                </div>
+                                <span class="text-muted">{{ t.job_deadline }}: {{ application.job_deadline }}</span>
+                            </div>
+                            
+                            <hr class="my-3">
+                            
+                            <div class="application-details">
+                                <h6 class="text-muted mb-2">{{ t.application_date }}</h6>
+                                <p class="mb-3">
+                                    {% if application.application_date %}
+                                        {{ application.application_date.split(' ')[0] if ' ' in application.application_date else application.application_date }}
+                                    {% endif %}
+                                </p>
+                                
+                                <h6 class="text-muted mb-2">{{ t.relevant_experience }}</h6>
+                                <p class="mb-3">{{ application.experience or t.not_provided }}</p>
+                                
+                                <h6 class="text-muted mb-2">{{ t.message_to_employer }}</h6>
+                                <p class="mb-0">{{ application.message or t.not_provided }}</p>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 p-4 pt-0">
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('job_details', id=application.job_id) }}" class="btn btn-outline-primary flex-grow-1 rounded-pill">
+                                    <i class="fas fa-eye me-1"></i>{{ t.view_job }}
+                                </a>
+                                <a href="{{ url_for('apply_for_job', id=application.job_id) }}" class="btn btn-primary rounded-pill">
+                                    <i class="fas fa-edit me-1"></i>{{ t.update_application }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5 my-4 bg-light rounded-4">
+            <i class="fas fa-clipboard-check fa-4x text-muted mb-4 opacity-50"></i>
+            <h3 class="text-muted">{{ t.no_applications }}</h3>
+            <p class="text-muted mx-auto" style="max-width: 500px;">{{ t.no_applications_message }}</p>
+            <a href="{{ url_for('jobs') }}" class="btn btn-primary mt-3 rounded-pill">
+                <i class="fas fa-search me-2"></i>{{ t.browse_jobs }}
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // For the my_applications page, we need to apply specific fixes
+    
+    // Fix 1: Set proper z-index for all dropdown menus
+    document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
+        menu.style.zIndex = '10000';
+        if (!menu.classList.contains('show')) {
+            menu.style.display = 'none';
+        }
+    });
+    
+    // Fix 2: Ensure language dropdown is properly aligned
+    const languageDropdown = document.getElementById('languageDropdown');
+    if (languageDropdown) {
+        const languageMenu = document.querySelector('.language-dropdown');
+        if (languageMenu) {
+            // Style the language dropdown appropriately
+            languageMenu.style.position = 'absolute';
+            languageMenu.style.top = '100%';
+            languageMenu.style.right = '0';
+            languageMenu.style.left = 'auto';
+            languageMenu.style.width = '180px';
+            languageMenu.style.minWidth = '180px';
+            languageMenu.style.maxWidth = '180px';
+            languageMenu.style.zIndex = '10000';
+            
+            // Manually add click handler to language dropdown toggle
+            languageDropdown.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Toggle language dropdown
+                if (languageMenu.classList.contains('show')) {
+                    languageMenu.classList.remove('show');
+                    languageMenu.style.display = 'none';
+                } else {
+                    // Close all other dropdowns
+                    document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+                        menu.classList.remove('show');
+                        menu.style.display = 'none';
+                    });
+                    
+                    // Position and show language menu
+                    const rect = languageDropdown.getBoundingClientRect();
+                    languageMenu.style.top = (rect.bottom + window.scrollY) + 'px';
+                    languageMenu.classList.add('show');
+                    languageMenu.style.display = 'block';
+                    
+                    // Add handler to close on outside click
+                    const closeLanguageDropdown = function(evt) {
+                        if (!languageDropdown.contains(evt.target) && !languageMenu.contains(evt.target)) {
+                            languageMenu.classList.remove('show');
+                            languageMenu.style.display = 'none';
+                            document.removeEventListener('click', closeLanguageDropdown);
+                        }
+                    };
+                    
+                    // Add outside click listener
+                    setTimeout(function() {
+                        document.addEventListener('click', closeLanguageDropdown);
+                    }, 10);
+                }
+            });
+        }
+    }
+    
+    // Fix 3: Handle user dropdown
+    const userDropdown = document.getElementById('userDropdown');
+    if (userDropdown) {
+        const userDropdownContainer = userDropdown.closest('.user-dropdown');
+        const userMenu = userDropdownContainer ? userDropdownContainer.querySelector('.dropdown-menu') : null;
+        
+        if (userMenu) {
+            // Style the user dropdown appropriately
+            userMenu.style.position = 'absolute';
+            userMenu.style.top = '100%';
+            userMenu.style.right = '0';
+            userMenu.style.left = 'auto';
+            userMenu.style.minWidth = '200px';
+            userMenu.style.zIndex = '10000';
+            
+            // Manually add click handler to user dropdown toggle
+            userDropdown.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Toggle user dropdown
+                if (userMenu.classList.contains('show')) {
+                    userMenu.classList.remove('show');
+                    userMenu.style.display = 'none';
+                } else {
+                    // Close all other dropdowns
+                    document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+                        menu.classList.remove('show');
+                        menu.style.display = 'none';
+                    });
+                    
+                    // Position and show user menu
+                    const rect = userDropdown.getBoundingClientRect();
+                    userMenu.style.top = (rect.bottom + window.scrollY) + 'px';
+                    userMenu.classList.add('show');
+                    userMenu.style.display = 'block';
+                    
+                    // Add handler to close on outside click
+                    const closeUserDropdown = function(evt) {
+                        if (!userDropdown.contains(evt.target) && !userMenu.contains(evt.target)) {
+                            userMenu.classList.remove('show');
+                            userMenu.style.display = 'none';
+                            document.removeEventListener('click', closeUserDropdown);
+                        }
+                    };
+                    
+                    // Add outside click listener
+                    setTimeout(function() {
+                        document.addEventListener('click', closeUserDropdown);
+                    }, 10);
+                }
+            });
+        }
+    }
+    
+    // Fix 4: Ensure escape key closes dropdown menus
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+                menu.classList.remove('show');
+                menu.style.display = 'none';
+            });
+        }
+    });
+});
+</script>
+{% endblock %} 

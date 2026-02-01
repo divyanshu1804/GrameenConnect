@@ -1,0 +1,315 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<title>{{ _('jobs') }} | {{ _('app_name') }}</title>
+{% endblock %}
+
+{% block content %}
+<div class="jobs-hero" style="background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{{ url_for('static', filename='images/labour_job.jpg') }}'); background-size: cover; background-position: center; min-height: 60vh; display: flex; align-items: center;">
+    <div class="container">
+        <div class="jobs-hero-content text-center text-white">
+            <h1 class="display-4 fw-bold mb-4">{{ _('find_your_next_opportunity') }}</h1>
+            <p class="lead mb-5">{{ _('connect_with_local_employers') }}</p>
+            {% if session.get('user_id') %}
+            <a href="#job-listing" class="btn btn-primary btn-lg rounded-pill px-5 py-3">{{ _('browse_jobs') }}</a>
+            {% else %}
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3">{{ _('login_to_apply') }}</a>
+                <a href="#job-listing" class="btn btn-outline-light btn-lg rounded-pill px-5 py-3">{{ _('browse_jobs') }}</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<section id="job-listing" class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="section-title display-6 fw-bold">{{ _('available_jobs') }}</h2>
+        {% if session.get('user_id') %}
+            {% set user = session.get('user', {}) %}
+            {% if user.get('role') == 'employer' %}
+            <a href="{{ url_for('create_job') }}" class="btn btn-primary rounded-pill px-4 py-2">
+                <i class="fas fa-plus me-2"></i>{{ _('create_job') }}
+            </a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-filter-wrapper mb-5">
+        <form method="GET" class="bg-white p-4 rounded-4 shadow-sm">
+            <div class="row g-3">
+                <div class="col-lg-5">
+                    <div class="search-wrapper position-relative">
+                        <i class="fas fa-search position-absolute start-0 top-50 translate-middle-y ms-4 text-primary"></i>
+                        <input type="text" class="form-control border-0 py-3 ps-5 rounded-pill bg-light" name="search" placeholder="{{ _('search_jobs') }}" value="{{ request.args.get('search', '') }}">
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="category-wrapper position-relative">
+                        <i class="fas fa-tag position-absolute start-0 top-50 translate-middle-y ms-4 text-primary"></i>
+                        <select class="form-select border-0 py-3 ps-5 rounded-pill bg-light" name="category">
+                            <option value="">{{ _('all_categories') }}</option>
+                            <option value="Agriculture" {% if selected_category == 'Agriculture' %}selected{% endif %}>{{ _('agriculture') }}</option>
+                            <option value="Tutoring" {% if selected_category == 'Tutoring' %}selected{% endif %}>{{ _('tutoring') }}</option>
+                            <option value="Labor" {% if selected_category == 'Labor' %}selected{% endif %}>{{ _('labor') }}</option>
+                            <option value="Skilled Trade" {% if selected_category == 'Skilled Trade' %}selected{% endif %}>{{ _('skilled_trade') }}</option>
+                            <option value="Other" {% if selected_category == 'Other' %}selected{% endif %}>{{ _('other') }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill">
+                        <i class="fas fa-filter me-2"></i>{{ _('filter') }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Jobs List -->
+    {% if jobs %}
+        <div class="row g-4">
+            {% for job in jobs %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="job-card bg-white h-100 rounded-4 shadow-sm border-0 overflow-hidden">
+                        <div class="card-top p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="job-category badge rounded-pill {% if job.category == 'Agriculture' %}bg-success{% elif job.category == 'Tutoring' %}bg-info{% elif job.category == 'Labor' %}bg-warning{% elif job.category == 'Skilled Trade' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                    {{ job.category }}
+                                </span>
+                                <span class="job-deadline text-danger fw-medium">{{ job.deadline }}</span>
+                            </div>
+                            <h5 class="fw-bold mb-3">{{ job.title }}</h5>
+                            <div class="job-location d-flex align-items-center mb-3">
+                                <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                <span class="text-muted">{{ job.location }}</span>
+                            </div>
+                            <p class="job-description text-muted mb-4">{{ job.description[:120] }}{% if job.description|length > 120 %}...{% endif %}</p>
+                        </div>
+                        <div class="job-details p-4 bg-light">
+                            <div class="job-meta d-flex flex-column gap-2 mb-4">
+                                <div class="meta-item d-flex align-items-center">
+                                    <i class="fas fa-rupee-sign text-primary me-3"></i>
+                                    <span>{{ job.salary }}</span>
+                                </div>
+                                <div class="meta-item d-flex align-items-center">
+                                    <i class="fas fa-phone text-primary me-3"></i>
+                                    <span>{{ job.contact }}</span>
+                                </div>
+                            </div>
+                            <div class="job-actions d-flex gap-2">
+                                <a href="{{ url_for('job_details', id=job.id) }}" class="btn btn-outline-primary flex-grow-1 rounded-pill">
+                                    {{ _('view_details') }}
+                                </a>
+                                {% if session.get('user_id') %}
+                                <a href="{{ url_for('apply_for_job', id=job.id) }}" class="btn btn-primary rounded-pill">
+                                    <i class="fas fa-paper-plane me-1"></i>{{ _('apply') }}
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state text-center py-5 bg-light rounded-4 shadow-sm">
+            <i class="fas fa-briefcase fa-3x text-muted mb-3 opacity-50"></i>
+            <h3 class="h4 fw-normal text-muted">{{ _('no_jobs_found') }}</h3>
+            <p class="text-muted mx-auto" style="max-width: 400px;">{{ _('try_different_search') }}</p>
+            {% if selected_category %}
+                <a href="{{ url_for('jobs') }}" class="btn btn-primary mt-3 rounded-pill">
+                    <i class="fas fa-undo me-2"></i>{{ _('clear_filters') }}
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+body, html {
+    max-width: 100%;
+    overflow-x: hidden !important;
+}
+
+.jobs-hero {
+    position: relative;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 50px;
+    width: 100%;
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+.jobs-hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+}
+
+.jobs-hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.jobs-hero-content p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.search-filter-wrapper {
+    margin-bottom: 3rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.search-filter-wrapper form {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.search-wrapper input,
+.category-wrapper select {
+    height: 100%;
+    border: none;
+    padding-left: 3rem;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.search-wrapper input:focus,
+.category-wrapper select:focus {
+    background-color: #fff;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.job-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    width: 100%;
+}
+
+.job-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.job-category {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+}
+
+.job-deadline {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.empty-state {
+    padding: 5rem 2rem;
+    background: #f8f9fa;
+    border-radius: 1rem;
+    width: 100%;
+}
+
+/* Fix row issue */
+.row.g-4 {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+}
+
+@media (max-width: 1399px) {
+    .jobs-hero-content h1 {
+        font-size: 2.75rem;
+    }
+    
+    .jobs-hero-content p {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 1199px) {
+    .jobs-hero-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .jobs-hero-content p {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 991px) {
+    .jobs-hero {
+        min-height: 50vh;
+    }
+    
+    .jobs-hero-content h1 {
+        font-size: 2.25rem;
+    }
+    
+    .jobs-hero-content p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .jobs-hero {
+        min-height: 40vh;
+    }
+    
+    .jobs-hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .jobs-hero-content p {
+        font-size: 1rem;
+    }
+    
+    .search-wrapper input,
+    .category-wrapper select {
+        padding-left: 2.5rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .jobs-hero-content h1 {
+        font-size: 1.75rem;
+    }
+    
+    .jobs-hero-content p {
+        font-size: 0.95rem;
+    }
+    
+    .search-wrapper,
+    .category-wrapper {
+        margin-bottom: 0.75rem;
+    }
+    
+    .job-card {
+        margin-bottom: 1rem;
+    }
+    
+    .search-filter-wrapper form {
+        padding: 1.25rem !important;
+    }
+    
+    .empty-state {
+        padding: 3rem 1rem;
+    }
+}
+</style>
+{% endblock %} 

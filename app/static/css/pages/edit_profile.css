@@ -1,0 +1,121 @@
+/**
+ * Edit Profile Page Styles
+ * Includes fixes for file upload forms and mobile responsiveness
+ */
+
+/* Fix global overflow issues */
+body, html {
+    max-width: 100vw;
+    overflow-x: hidden !important;
+}
+
+/* File upload styling */
+.upload-container {
+    position: relative;
+}
+
+.input-group {
+    width: 100%;
+}
+
+.current-image img {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Error message style */
+.file-error {
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+/* Improve preview display */
+.preview-container {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Fix image errors */
+img.error {
+    display: none;
+}
+
+/* Responsive fixes */
+@media (max-width: 767px) {
+    .d-flex.align-items-center {
+        flex-direction: column;
+        align-items: center !important;
+    }
+    
+    .current-image.me-3 {
+        margin-right: 0 !important;
+        margin-bottom: 15px;
+    }
+    
+    .upload-container {
+        width: 100%;
+    }
+}
+
+/* Form elements improved styling */
+.form-floating {
+    margin-bottom: 0;
+}
+
+.form-text {
+    margin-top: 4px;
+    font-size: 0.85rem;
+}
+
+/* Uploaded image styles */
+.rounded-circle {
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Submit button improvements */
+.btn-lg {
+    padding: 0.8rem 2rem;
+}
+
+/* Card containing form */
+.card {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 30px rgba(0,0,0,0.1);
+}
+
+/* Clear button styles */
+.btn-outline-secondary {
+    border-color: #ced4da;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+/* Animation for alerts */
+.alert {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Fix for image uploads on mobile */
+@media (max-width: 576px) {
+    input[type="file"] {
+        font-size: 0.85rem;
+    }
+    
+    label.form-label {
+        font-size: 0.95rem;
+    }
+} 

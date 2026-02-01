@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ scheme.title }} - GrameenConnect{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('schemes') }}">Government Schemes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ scheme.title }}</li>
+        </ol>
+    </nav>
+    
+    <div class="card feature-card">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0">{{ scheme.title }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="mb-3">Description</h5>
+                    <p>{{ scheme.description }}</p>
+                    
+                    <h5 class="mb-3 mt-4">Eligibility Criteria</h5>
+                    <p>{{ scheme.eligibility }}</p>
+                    
+                    <h5 class="mb-3 mt-4">How to Apply</h5>
+                    <p>{{ scheme.how_to_apply | safe }}</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Details</h5>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Agency:</span> <span>{{ scheme.agency }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Deadline:</span> <span>{{ scheme.deadline }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Contact:</span> <span>{{ scheme.contact }}</span>
+                            </li>
+                            {% if scheme.website %}
+                                <li class="list-group-item">
+                                    <a href="{{ scheme.website }}" target="_blank" class="btn btn-outline-success w-100">
+                                        <i class="bi bi-globe"></i> Visit Official Website
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-4">
+        <a href="{{ url_for('schemes') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to All Schemes
+        </a>
+    </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+{% endblock %} 

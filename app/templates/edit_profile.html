@@ -1,0 +1,384 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ t.edit_profile }} - GrameenConnect{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/edit_profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="fade-in container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0"><i class="fas fa-user-edit text-primary me-2"></i>{{ t.edit_profile }}</h1>
+                <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary rounded-pill">
+                    <i class="fas fa-arrow-left me-1"></i>{{ t.back_to_profile }}
+                </a>
+            </div>
+            
+            <div class="card border-0 rounded-4 shadow">
+                <div class="card-body p-4">
+                    {% if get_flashed_messages() %}
+                    <div class="alert alert-info">
+                        {% for message in get_flashed_messages() %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST" action="{{ url_for('edit_profile') }}" enctype="multipart/form-data">
+                        <div class="row g-4">
+                            <!-- Username (readonly) -->
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control bg-light" id="username" value="{{ user.username }}" disabled>
+                                    <label for="username">{{ t.username }}</label>
+                                </div>
+                                <div class="form-text text-muted">{{ t.username_not_editable }}</div>
+                            </div>
+                            
+                            <!-- Profile Image -->
+                            <div class="col-md-6">
+                                <label for="profile_image" class="form-label">{{ t.profile_image }}</label>
+                                <div class="d-flex align-items-center mb-2">
+                                    {% if user.profile_image %}
+                                        <div class="current-image me-3">
+                                            <img src="{{ url_for('static', filename='images/uploads/' + user.profile_image) }}" 
+                                                 alt="{{ t.current_profile_image }}" 
+                                                 class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
+                                        </div>
+                                    {% else %}
+                                        <div class="current-image me-3 bg-light rounded-circle d-flex align-items-center justify-content-center" 
+                                             style="width: 80px; height: 80px;">
+                                            <i class="fas fa-user fa-2x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div class="upload-container flex-grow-1">
+                                        <div class="input-group">
+                                            <input type="file" class="form-control" id="profile_image" name="profile_image" 
+                                                   accept=".jpg, .jpeg, .png, .gif">
+                                            <button class="btn btn-outline-secondary" type="button" id="clear_profile_image">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <div class="mt-2 small text-muted image-help">
+                                            Accepted formats: JPG, PNG, GIF (max 5MB)
+                                        </div>
+                                        <div class="mt-1">
+                                            <small>
+                                                <a href="{{ url_for('direct_upload') }}" target="_blank" class="text-decoration-none">
+                                                    <i class="fas fa-external-link-alt me-1"></i>Try alternative upload if this doesn't work
+                                                </a>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-text text-muted">{{ t.profile_image_desc }}</div>
+                            </div>
+                            
+                            <!-- Banner Image -->
+                            <div class="col-md-6">
+                                <label for="banner_image" class="form-label">{{ t.banner_image }}</label>
+                                <div class="d-flex flex-column mb-2">
+                                    {% if user.banner_image %}
+                                        <div class="current-image mb-2">
+                                            <img src="{{ url_for('static', filename='images/uploads/' + user.banner_image) }}" 
+                                                 alt="{{ t.current_banner_image }}" 
+                                                 class="rounded" style="width: 100%; height: 80px; object-fit: cover;">
+                                        </div>
+                                    {% else %}
+                                        <div class="current-image mb-2 bg-light rounded d-flex align-items-center justify-content-center" 
+                                             style="width: 100%; height: 80px;">
+                                            <i class="fas fa-image fa-2x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div class="upload-container">
+                                        <div class="input-group">
+                                            <input type="file" class="form-control" id="banner_image" name="banner_image" 
+                                                   accept=".jpg, .jpeg, .png, .gif">
+                                            <button class="btn btn-outline-secondary" type="button" id="clear_banner_image">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <div class="mt-2 small text-muted">
+                                            Accepted formats: JPG, PNG, GIF (max 5MB)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-text text-muted">{{ t.banner_image_desc }}</div>
+                            </div>
+                            
+                            <!-- Full Name -->
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="fullname" name="fullname" value="{{ user.fullname or '' }}" placeholder="{{ t.fullname }}">
+                                    <label for="fullname">{{ t.fullname }}</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Village/Town -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="village" name="village" value="{{ user.village or '' }}" placeholder="{{ t.village }}">
+                                    <label for="village">{{ t.village }}</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Contact Number -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="contact" name="contact" value="{{ user.contact }}" placeholder="{{ t.contact_number }}" required>
+                                    <label for="contact">{{ t.contact_number }}<span class="text-danger">*</span></label>
+                                </div>
+                                <div class="form-text text-muted">{{ t.contact_required }}</div>
+                            </div>
+                            
+                            <!-- Join Date (readonly) -->
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control bg-light" id="joined_date" 
+                                           value="{% if user.joined_date %}{{ user.joined_date.split(' ')[0] if ' ' in user.joined_date else user.joined_date }}{% else %}{{ t.not_available }}{% endif %}" 
+                                           disabled>
+                                    <label for="joined_date">{{ t.joined }}</label>
+                                </div>
+                                <div class="form-text text-muted">{{ t.join_date_not_editable }}</div>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="col-12 mt-4 d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill">
+                                    <i class="fas fa-save me-2"></i>{{ t.save_changes }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Debugging info (can be removed in production) -->
+<div class="container mt-4 d-none">
+    <div class="card">
+        <div class="card-header">
+            Form Debug Info
+        </div>
+        <div class="card-body">
+            <h5>User Data:</h5>
+            <pre>Debug info hidden</pre>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listeners to clear buttons
+        document.getElementById('clear_profile_image').addEventListener('click', function() {
+            clearFileInput('profile_image');
+        });
+        
+        document.getElementById('clear_banner_image').addEventListener('click', function() {
+            clearFileInput('banner_image');
+        });
+        
+        function clearFileInput(inputId) {
+            const fileInput = document.getElementById(inputId);
+            if (fileInput) {
+                fileInput.value = '';
+                
+                // Clear any error messages
+                const errorMsg = fileInput.parentNode.parentNode.querySelector('.file-error');
+                if (errorMsg) errorMsg.remove();
+            }
+        }
+        
+        // Ensure file inputs work correctly
+        function validateFileInput(input) {
+            if (!input) return;
+            
+            input.addEventListener('change', function(e) {
+                const fileInput = e.target;
+                
+                // Reset error messages
+                const parentContainer = fileInput.closest('.upload-container');
+                if (!parentContainer) return;
+                
+                const errorMsg = parentContainer.querySelector('.file-error');
+                if (errorMsg) errorMsg.remove();
+                
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    
+                    // Check file type
+                    const validExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+                    const fileName = file.name.toLowerCase();
+                    const validFile = validExtensions.some(ext => fileName.endsWith(ext));
+                    
+                    if (!validFile) {
+                        showError(parentContainer, 'Please select a valid image file (JPG, PNG, or GIF)');
+                        fileInput.value = ''; // Clear input
+                        return;
+                    }
+                    
+                    // Check file size (max 5MB)
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    if (file.size > maxSize) {
+                        showError(parentContainer, 'File is too large. Maximum size is 5MB.');
+                        fileInput.value = ''; // Clear input
+                        return;
+                    }
+                    
+                    // Preview the image
+                    previewImage(fileInput);
+                }
+            });
+        }
+        
+        // Show error message
+        function showError(container, message) {
+            if (!container) return;
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.classList.add('text-danger', 'mt-1', 'file-error');
+            errorDiv.innerText = message;
+            container.appendChild(errorDiv);
+        }
+        
+        // Preview image before upload
+        function previewImage(input) {
+            if (!input || !input.files || !input.files[0]) return;
+            
+            try {
+                const reader = new FileReader();
+                const container = input.closest('.col-md-6');
+                if (!container) return;
+                
+                const currentImageDiv = container.querySelector('.current-image');
+                if (!currentImageDiv) return;
+                
+                reader.onload = function(e) {
+                    try {
+                        // Handle profile image (circular)
+                        if (input.id === 'profile_image') {
+                            let img = currentImageDiv.querySelector('img');
+                            if (img) {
+                                img.src = e.target.result;
+                            } else {
+                                currentImageDiv.innerHTML = '';
+                                img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.alt = 'Profile Preview';
+                                img.className = 'rounded-circle';
+                                img.style.width = '80px';
+                                img.style.height = '80px';
+                                img.style.objectFit = 'cover';
+                                currentImageDiv.appendChild(img);
+                            }
+                        } 
+                        // Handle banner image (rectangular)
+                        else if (input.id === 'banner_image') {
+                            let img = currentImageDiv.querySelector('img');
+                            if (img) {
+                                img.src = e.target.result;
+                                img.style.display = 'block';
+                            } else {
+                                currentImageDiv.innerHTML = '';
+                                img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.alt = 'Banner Preview';
+                                img.className = 'rounded';
+                                img.style.width = '100%';
+                                img.style.height = '80px';
+                                img.style.objectFit = 'cover';
+                                currentImageDiv.appendChild(img);
+                            }
+                        }
+                    } catch (err) {
+                        console.error('Error updating preview:', err);
+                    }
+                }
+                
+                reader.onerror = function(error) {
+                    console.error('Error reading file:', error);
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            } catch (err) {
+                console.error('Error in preview image function:', err);
+            }
+        }
+        
+        // Handle form submission
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                try {
+                    // Add loading indicator
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                    }
+                    
+                    // Log file information for debugging
+                    const profileInput = document.getElementById('profile_image');
+                    const bannerInput = document.getElementById('banner_image');
+                    
+                    if (profileInput && profileInput.files.length > 0) {
+                        const file = profileInput.files[0];
+                        console.log('Profile file:', file.name, file.type, file.size);
+                    }
+                    
+                    if (bannerInput && bannerInput.files.length > 0) {
+                        const file = bannerInput.files[0];
+                        console.log('Banner file:', file.name, file.type, file.size);
+                    }
+                } catch (err) {
+                    console.error('Error in form submission handler:', err);
+                    // Don't prevent form submission if there's an error in our handler
+                }
+                // Form submission will continue
+            });
+        }
+        
+        // Initialize validation for file inputs
+        const profileInput = document.getElementById('profile_image');
+        const bannerInput = document.getElementById('banner_image');
+        
+        if (profileInput) validateFileInput(profileInput);
+        if (bannerInput) validateFileInput(bannerInput);
+        
+        // Fix image error handling
+        const images = document.querySelectorAll('img');
+        images.forEach(img => {
+            img.addEventListener('error', function() {
+                if (this.getAttribute('data-error-handled')) return;
+                
+                // For profile images
+                if (this.classList.contains('rounded-circle')) {
+                    this.src = "{{ url_for('static', filename='images/default-avatar.png') }}";
+                } 
+                // For banner images
+                else {
+                    this.style.display = 'none';
+                    const defaultBanner = document.createElement('div');
+                    defaultBanner.className = 'bg-light rounded d-flex align-items-center justify-content-center';
+                    defaultBanner.style.width = '100%';
+                    defaultBanner.style.height = '80px';
+                    defaultBanner.innerHTML = '<i class="fas fa-image fa-2x text-muted"></i>';
+                    if (this.parentNode) {
+                        this.parentNode.appendChild(defaultBanner);
+                    }
+                }
+                
+                this.setAttribute('data-error-handled', 'true');
+            });
+        });
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,256 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ t.register }} - GrameenConnect{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-7 d-none d-md-flex align-items-center">
+                <div class="auth-info p-4">
+                    <h2 class="mb-4">{{ t.join_community }}</h2>
+                    <p class="lead mb-4">{{ t.register_tagline }}</p>
+                    <div class="auth-features">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-circle bg-success text-white me-3">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <span>{{ t.connect_with_community }}</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-circle bg-success text-white me-3">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                            <span>{{ t.post_jobs_products }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="icon-circle bg-success text-white me-3">
+                                <i class="fas fa-hand-holding-heart"></i>
+                            </div>
+                            <span>{{ t.access_community_support }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="auth-form shadow">
+                    <div class="text-center mb-4">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="GrameenConnect Logo" class="auth-logo mb-3">
+                        <h2 class="mb-1">{{ t.create_account }}</h2>
+                        <p class="text-muted">{{ t.fill_details }}</p>
+                    </div>
+                    <form method="post" action="{{ url_for('register') }}">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">{{ t.username }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="{{ t.choose_username }}" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">{{ t.password }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="{{ t.choose_password }}" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fullname" class="form-label">{{ t.full_name }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                <input type="text" class="form-control" id="fullname" name="fullname" placeholder="{{ t.enter_full_name }}">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="village" class="form-label">{{ t.village_town }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                <input type="text" class="form-control" id="village" name="village" placeholder="{{ t.enter_village }}">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="contact" class="form-label">{{ t.contact_number }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input type="text" class="form-control" id="contact" name="contact" placeholder="{{ t.enter_contact }}" required>
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>{{ t.register }}
+                            </button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-4">
+                        <p>{{ t.already_have_account }} <a href="{{ url_for('login') }}" class="text-success fw-bold">{{ t.login }}</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    body, html {
+        max-width: 100vw;
+        overflow-x: hidden !important;
+    }
+
+    .auth-form {
+        background-color: white;
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+    
+    .auth-logo {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+    }
+    
+    .auth-info {
+        height: 100%;
+    }
+    
+    .icon-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .shadow {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+    }
+    
+    /* Fix container padding */
+    .container.my-5 {
+        padding: 0 1rem !important;
+        overflow: hidden;
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .row {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        box-sizing: border-box;
+    }
+    
+    .col-md-5, .col-md-7 {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        box-sizing: border-box;
+    }
+    
+    .input-group {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .fade-in {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 1199px) {
+        .auth-form {
+            padding: 2rem;
+        }
+    }
+    
+    @media (max-width: 991px) {
+        .auth-form {
+            padding: 1.75rem;
+        }
+        
+        .auth-logo {
+            width: 70px;
+            height: 70px;
+        }
+    }
+    
+    @media (max-width: 767px) {
+        .fade-in {
+            padding: 0;
+        }
+        
+        .container.my-5 {
+            padding: 0 !important;
+            margin: 1rem 0 !important;
+        }
+        
+        .auth-form {
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        .btn-lg {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 575px) {
+        .auth-form {
+            padding: 1.25rem;
+            margin: 0;
+            box-shadow: none;
+            border-radius: 0;
+            width: 100%;
+        }
+        
+        .container.my-5 {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .auth-logo {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .btn-lg {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+        
+        .row {
+            margin: 0;
+            width: 100%;
+        }
+        
+        .col-md-5 {
+            padding: 0;
+            width: 100%;
+        }
+        
+        .input-group {
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        /* Prevent horizontal scrolling */
+        html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+    }
+</style>
+{% endblock %} 

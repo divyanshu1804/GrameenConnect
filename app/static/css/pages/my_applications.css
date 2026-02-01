@@ -1,0 +1,69 @@
+/* 
+ * Specific stylesheet for My Applications page
+ * Focuses on fixing dropdown menu z-index and position issues
+ */
+
+/* Force proper stacking context */
+#main-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Override navbar z-index */
+header#navbar-header {
+    position: relative;
+    z-index: 100; /* Ensure navbar is above main content */
+}
+
+/* Ensure dropdown menus appear over everything else */
+.dropdown-menu {
+    z-index: 10000 !important;
+    position: absolute !important;
+    border: 1px solid rgba(0,0,0,.15) !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15) !important;
+}
+
+.dropdown-menu.show {
+    display: block !important;
+}
+
+/* Specific language dropdown fixes */
+.language-dropdown {
+    width: 180px !important;
+    min-width: 180px !important;
+    max-width: 180px !important;
+    right: 0 !important;
+    left: auto !important;
+}
+
+/* Fix for user dropdown */
+.user-dropdown .dropdown-menu {
+    width: auto !important;
+    min-width: 200px !important;
+    right: 0 !important;
+    left: auto !important;
+}
+
+/* Make dropdown items clearly visible */
+.dropdown-item {
+    padding: 0.6rem 1.2rem !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Fix for mobile view */
+@media (max-width: 767px) {
+    .navbar-nav.ms-auto .dropdown-menu.show {
+        position: absolute !important;
+        top: 100% !important;
+        right: 0 !important;
+        left: auto !important;
+        width: auto !important;
+    }
+    
+    /* Ensure dropdown toggle has proper z-index */
+    .nav-link.dropdown-toggle {
+        position: relative;
+        z-index: 10001;
+    }
+} 
