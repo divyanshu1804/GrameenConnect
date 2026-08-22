@@ -259,7 +259,7 @@ translations = {
         'logged_in_message': 'Thank you for being a part of our growing community!',
 
         # Government Schemes
-        'govt_schemes': 'Government Schemes',
+        'govt_schemes': 'Govt. Schemes',
         'government_programs': 'Government Programs',
         'explore_schemes_by_category': 'Explore Schemes by Category',
         'education': 'Education',
